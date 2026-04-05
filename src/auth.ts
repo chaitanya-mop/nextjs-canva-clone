@@ -1,11 +1,12 @@
 import NextAuth from "next-auth";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import GitHub from "next-auth/providers/github";
+import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
-import authConfig from "@/auth.config";
 import { db } from "@/db/drizzle";
 import { users } from "@/db/schema";
 
@@ -16,8 +17,9 @@ const CredentialsSchema = z.object({
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: DrizzleAdapter(db),
-  ...authConfig,
   providers: [
+    GitHub,
+    Google,
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
@@ -39,6 +41,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return user;
       },
     }),
-    ...authConfig.providers.filter((p) => p.id !== "credentials"),
   ],
+  pages: {
+    signIn: "/sign-in",
+    error: "/sign-in",
+  },
+  session: {
+    strategy: "jwt",
+  },
+  callbacks: {
+    session({ session, token }) {
+      if (token.id) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
+    jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+  },
 });
