@@ -7,6 +7,8 @@ import { zValidator } from "@hono/zod-validator";
 import { db } from "@/db/drizzle";
 import { users } from "@/db/schema";
 
+const generateId = () => crypto.randomUUID();
+
 const app = new Hono()
   .post(
     "/",
@@ -33,6 +35,7 @@ const app = new Hono()
       }
 
       await db.insert(users).values({
+        id: generateId(),
         email,
         name,
         password: hashedPassword,
