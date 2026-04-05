@@ -1,9 +1,9 @@
+import NextAuth from "next-auth";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import NextAuth from "next-auth";
 import { eq } from "drizzle-orm";
-import Credentials from "next-auth/providers/credentials";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
 
 import authConfig from "@/auth.config";
 import { db } from "@/db/drizzle";
@@ -25,34 +25,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         const validatedFields = CredentialsSchema.safeParse(credentials);
-
-        if (!validatedFields.success) {
-          return null;
-        }
+        if (!validatedFields.success) return null;
 
         const { email, password } = validatedFields.data;
-
-        const query = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email));
-
+        const query = await db.select().from(users).where(eq(users.email, email));
         const user = query[0];
 
-        if (!user || !user.password) {
-          return null;
-        }
+        if (!user || !user.password) return null;
 
         const passwordsMatch = await bcrypt.compare(password, user.password);
-
-        if (!passwordsMatch) {
-          return null;
-        }
+        if (!passwordsMatch) return null;
 
         return user;
       },
     }),
-    // GitHub and Google are spread in from authConfig.providers
     ...authConfig.providers.filter((p) => p.id !== "credentials"),
   ],
 });
