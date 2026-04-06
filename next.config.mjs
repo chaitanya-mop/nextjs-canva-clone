@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ["@neondatabase/serverless", "bcryptjs", "drizzle-orm"],
+  experimental: {
+    serverComponentsExternalPackages: ["@neondatabase/serverless", "bcryptjs", "drizzle-orm"],
+  },
   images: {
     remotePatterns: [
       {
