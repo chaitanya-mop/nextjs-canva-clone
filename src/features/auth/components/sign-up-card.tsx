@@ -8,6 +8,7 @@ import { FcGoogle } from "react-icons/fc";
 import { TriangleAlert } from "lucide-react";
 
 import { useSignUp } from "@/features/auth/hooks/use-sign-up";
+import { credentialsSignIn } from "@/features/auth/actions";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -42,11 +43,7 @@ export const SignUpCard = () => {
       password
     }, {
       onSuccess: () => {
-        signIn("credentials", {
-          email,
-          password,
-          callbackUrl: "/",
-        });
+        credentialsSignIn(email, password);
       },
     })
   };
