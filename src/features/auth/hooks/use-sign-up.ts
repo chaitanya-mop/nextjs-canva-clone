@@ -17,7 +17,9 @@ export const useSignUp = () => {
       const response = await client.api.users.$post({ json });
 
       if (!response.ok) {
-        throw new Error("Something went wrong");
+        const data = await response.json().catch(() => null);
+        const message = (data as { error?: string } | null)?.error ?? "Something went wrong";
+        throw new Error(message);
       }
 
       return await response.json();
