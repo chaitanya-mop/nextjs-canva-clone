@@ -24,16 +24,17 @@ const app = new Hono()
       const { name, email, password } = c.req.valid("json");
 
       try {
-        const hashedPassword = await bcrypt.hash(password, 12);
-
-        const query = await db
+        // Check for duplicate email BEFORE expensive bcrypt hash
+        const existing = await db
           .select()
           .from(users)
           .where(eq(users.email, email));
 
-        if (query[0]) {
+        if (existing[0]) {
           return c.json({ error: "Email already in use" }, 400);
         }
+
+        const hashedPassword = await bcrypt.hash(password, 12);
 
         await db.insert(users).values({
           id: generateId(),
