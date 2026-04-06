@@ -18,6 +18,7 @@ declare module "@auth/core/jwt" {
 
 // Edge-compatible config: no DB imports, no bcrypt
 export default {
+  trustHost: true,
   providers: [
     // Credentials provider with no authorize logic here — handled in auth.ts
     Credentials({

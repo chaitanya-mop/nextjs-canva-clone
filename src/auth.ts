@@ -16,6 +16,7 @@ const CredentialsSchema = z.object({
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   adapter: DrizzleAdapter(db),
   providers: [
     GitHub,
