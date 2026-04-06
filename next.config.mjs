@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    serverComponentsExternalPackages: ["@neondatabase/serverless", "bcryptjs", "drizzle-orm"],
+  },
   images: {
     remotePatterns: [
       {
@@ -12,7 +15,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "replicate.delivery"
+        hostname: "replicate.delivery",
       },
     ],
   },

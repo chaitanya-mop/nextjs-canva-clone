@@ -64,7 +64,12 @@ export const SignUpCard = () => {
       {!!mutation.error && (
         <div className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive mb-6">
           <TriangleAlert className="size-4" />
-          <p>Something went wrong</p>
+          <p>
+            {mutation.error.message}
+            {mutation.error.message === "Email already in use" && (
+              <> &mdash; <Link href="/sign-in" className="underline">Sign in instead</Link></>
+            )}
+          </p>
         </div>
       )}
       <CardContent className="space-y-5 px-0 pb-0">
